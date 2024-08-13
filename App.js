@@ -1,10 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
+
+const request = async(callback) => {
+  const response = await fetch('https://swapi.dev/api/starships');
+  const parsed = await response.json();
+  callback(parsed.results);
+};
 
 export default function App() {
+  const[registros, setregistros] = useState([])
+
+  useEffect(()=>{
+    request(setregistros);
+  }, []);
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text style={styles.titulo}>Usando API do Star Wars </Text>
+      <FlatList
+      data={registros}
+      keyExtractor={(item)=>item.name.toString()}
+      renderItem={({item}) =>
+        <View>
+      <Text style={styles.item}>
+        <Text>{item.name}</Text>
+        <Text>{item.model}</Text>
+        <Text>{item.manufacture}</Text>
+      </Text>
+      </View>
+      }
+      />
       <StatusBar style="auto" />
     </View>
   );
@@ -13,8 +37,19 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  titulo:{
+    fontSize: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  item:{
+    backgroundColor: '#AB49CC',
+    borderRadius:20,
+    margin: 50,
+    fontSize: 30
+    
   },
 });
